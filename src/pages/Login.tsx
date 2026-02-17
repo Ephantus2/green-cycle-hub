@@ -1,20 +1,34 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Layout from "@/components/Layout";
-import { Mail, Lock, Eye, EyeOff, Recycle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Recycle, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Will integrate with backend later
+    setIsLoading(true);
+    try {
+      await signIn(email, password);
+      toast.success("Welcome back!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,6 +60,8 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
+                    required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -61,6 +77,8 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10"
+                    required
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
@@ -72,11 +90,10 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <button type="button" className="text-sm text-primary hover:underline">Forgot password?</button>
-              </div>
-
-              <Button variant="hero" type="submit" className="w-full">Sign In</Button>
+              <Button variant="hero" type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Sign In
+              </Button>
             </form>
 
             <p className="text-center text-sm text-muted-foreground mt-6">
