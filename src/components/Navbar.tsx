@@ -1,8 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Recycle, Menu, X } from "lucide-react";
+import { Recycle, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -13,7 +15,19 @@ const navItems = [
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Signed out successfully");
+      navigate("/");
+    } catch {
+      toast.error("Failed to sign out");
+    }
+  };
 
   return (
     <motion.nav
@@ -43,12 +57,25 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
-          <Link to="/login">
-            <Button variant="ghost" size="sm">Login</Button>
-          </Link>
-          <Link to="/register">
-            <Button variant="hero" size="sm">Get Started</Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm">Dashboard</Button>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-1" /> Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">Login</Button>
+              </Link>
+              <Link to="/register">
+                <Button variant="hero" size="sm">Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -71,12 +98,25 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="border-t border-border/30 pt-2 mt-2 flex flex-col gap-2">
-              <Link to="/login" onClick={() => setMobileOpen(false)}>
-                <Button variant="ghost" className="w-full">Login</Button>
-              </Link>
-              <Link to="/register" onClick={() => setMobileOpen(false)}>
-                <Button variant="hero" className="w-full">Get Started</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" className="w-full">Dashboard</Button>
+                  </Link>
+                  <Button variant="ghost" className="w-full" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                    <LogOut className="w-4 h-4 mr-1" /> Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" className="w-full">Login</Button>
+                  </Link>
+                  <Link to="/register" onClick={() => setMobileOpen(false)}>
+                    <Button variant="hero" className="w-full">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </motion.div>
