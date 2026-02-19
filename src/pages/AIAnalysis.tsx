@@ -2,9 +2,10 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Upload, Camera, Recycle, Flame, Leaf, AlertTriangle, RotateCcw, CheckCircle2, MapPin, Loader2, TreePine } from "lucide-react";
+import { Upload, Camera, Recycle, Flame, Leaf, AlertTriangle, RotateCcw, CheckCircle2, MapPin, Loader2, TreePine, Truck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import CompanyListDialog from "@/components/CompanyListDialog";
 
 type WasteType = "recyclable" | "organic" | "hazardous" | "burnable" | "reusable";
 
@@ -34,6 +35,8 @@ const AIAnalysis = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [companyDialogOpen, setCompanyDialogOpen] = useState(false);
+  const [companyDialogMode, setCompanyDialogMode] = useState<"find" | "pickup">("find");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
@@ -229,11 +232,11 @@ const AIAnalysis = () => {
 
                         {/* Action Buttons */}
                         <div className="flex gap-3">
-                          <Button variant="hero" size="sm" className="flex-1">
+                          <Button variant="hero" size="sm" className="flex-1" onClick={() => { setCompanyDialogMode("find"); setCompanyDialogOpen(true); }}>
                             <MapPin className="w-4 h-4" /> Find Companies
                           </Button>
-                          <Button variant="secondary" size="sm" className="flex-1">
-                            Request Pickup
+                          <Button variant="secondary" size="sm" className="flex-1" onClick={() => { setCompanyDialogMode("pickup"); setCompanyDialogOpen(true); }}>
+                            <Truck className="w-4 h-4" /> Request Pickup
                           </Button>
                         </div>
                       </motion.div>
@@ -249,6 +252,14 @@ const AIAnalysis = () => {
             </motion.div>
           </div>
         </div>
+
+        <CompanyListDialog
+          open={companyDialogOpen}
+          onOpenChange={setCompanyDialogOpen}
+          wasteType={current?.type}
+          wasteItem={current?.item}
+          mode={companyDialogMode}
+        />
       </section>
     </Layout>
   );

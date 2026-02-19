@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      pickup_requests: {
+        Row: {
+          agreement_pdf_url: string | null
+          agreement_signed_company: boolean
+          agreement_signed_user: boolean
+          amount: number | null
+          company_id: number
+          company_name: string
+          created_at: string
+          id: string
+          location: string
+          preferred_date: string
+          preferred_time: string
+          status: string
+          updated_at: string
+          user_id: string
+          waste_description: string | null
+          waste_type: string
+        }
+        Insert: {
+          agreement_pdf_url?: string | null
+          agreement_signed_company?: boolean
+          agreement_signed_user?: boolean
+          amount?: number | null
+          company_id: number
+          company_name: string
+          created_at?: string
+          id?: string
+          location: string
+          preferred_date: string
+          preferred_time: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          waste_description?: string | null
+          waste_type: string
+        }
+        Update: {
+          agreement_pdf_url?: string | null
+          agreement_signed_company?: boolean
+          agreement_signed_user?: boolean
+          amount?: number | null
+          company_id?: number
+          company_name?: string
+          created_at?: string
+          id?: string
+          location?: string
+          preferred_date?: string
+          preferred_time?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          waste_description?: string | null
+          waste_type?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           business_license: string | null

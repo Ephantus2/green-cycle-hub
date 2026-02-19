@@ -2,27 +2,27 @@ import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Recycle, Flame, MapPin, Phone, Mail, Search, Star, CheckCircle2 } from "lucide-react";
+import { Recycle, Flame, MapPin, Phone, Search, Star, CheckCircle2, Truck } from "lucide-react";
 import { useState } from "react";
-
-const companies = [
-  { id: 1, name: "GreenCycle Ltd", type: "recycling", location: "Nairobi", distance: "2.1km", rating: 4.8, verified: true, materials: ["Plastic", "Metal", "Glass"], phone: "+254 712 345 678" },
-  { id: 2, name: "EcoFlame Industries", type: "incineration", location: "Kiambu", distance: "5.3km", rating: 4.5, verified: true, materials: ["Medical waste", "Non-recyclable"], phone: "+254 723 456 789" },
-  { id: 3, name: "CleanCity Recyclers", type: "recycling", location: "Nairobi", distance: "3.7km", rating: 4.9, verified: true, materials: ["Paper", "Cardboard", "Plastic"], phone: "+254 734 567 890" },
-  { id: 4, name: "SafeBurn Solutions", type: "incineration", location: "Mombasa", distance: "12km", rating: 4.3, verified: true, materials: ["Hazardous", "Chemical waste"], phone: "+254 745 678 901" },
-  { id: 5, name: "ReNew Materials Co", type: "recycling", location: "Nakuru", distance: "8.2km", rating: 4.7, verified: false, materials: ["E-waste", "Batteries", "Metal"], phone: "+254 756 789 012" },
-  { id: 6, name: "ThermalWaste Kenya", type: "incineration", location: "Nairobi", distance: "4.1km", rating: 4.6, verified: true, materials: ["Industrial waste", "Organic"], phone: "+254 767 890 123" },
-];
+import { companies, type Company } from "@/data/companies";
+import PickupRequestDialog from "@/components/PickupRequestDialog";
 
 const Companies = () => {
   const [filter, setFilter] = useState<"all" | "recycling" | "incineration">("all");
   const [search, setSearch] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [pickupOpen, setPickupOpen] = useState(false);
 
   const filtered = companies.filter((c) => {
     if (filter !== "all" && c.type !== filter) return false;
     if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
+
+  const handleRequestPickup = (company: Company) => {
+    setSelectedCompany(company);
+    setPickupOpen(true);
+  };
 
   return (
     <Layout>
@@ -95,17 +95,20 @@ const Companies = () => {
                   ))}
                 </div>
 
-                <div className="flex gap-2">
-                  <Button variant="hero" size="sm" className="flex-1">Request Pickup</Button>
-                  <Button variant="secondary" size="sm">
-                    <Mail className="w-4 h-4" />
-                  </Button>
-                </div>
+                <Button variant="hero" size="sm" className="w-full" onClick={() => handleRequestPickup(company)}>
+                  <Truck className="w-4 h-4" /> Request Pickup
+                </Button>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+
+      <PickupRequestDialog
+        open={pickupOpen}
+        onOpenChange={setPickupOpen}
+        company={selectedCompany}
+      />
     </Layout>
   );
 };
