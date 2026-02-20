@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Recycle, Menu, X, LogOut } from "lucide-react";
+import { Recycle, Menu, X, LogOut, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +10,7 @@ const navItems = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
   { label: "Companies", path: "/companies" },
+  { label: "Points", path: "/points" },
   { label: "Contact", path: "/contact" },
 ];
 

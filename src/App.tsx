@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AIAnalysis from "./pages/AIAnalysis";
 import Companies from "./pages/Companies";
+import Points from "./pages/Points";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/ai-analysis" element={<AIAnalysis />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/points" element={<Points />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
