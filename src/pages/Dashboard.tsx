@@ -2,17 +2,13 @@ import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Camera, Package, Truck, CreditCard, MessageCircle,
-  Upload, BarChart3, Recycle, Flame, AlertTriangle, Bell
+  Upload, Recycle, Flame, AlertTriangle, Bell, Star
 } from "lucide-react";
-
-const summaryCards = [
-  { label: "Waste Uploads", value: "24", icon: Upload, color: "text-primary" },
-  { label: "Pending Pickups", value: "3", icon: Truck, color: "text-warning" },
-  { label: "Completed Orders", value: "18", icon: Package, color: "text-info" },
-  { label: "Total Spent", value: "KES 4,200", icon: CreditCard, color: "text-primary" },
-];
 
 const recentAnalysis = [
   { type: "Recyclable", icon: Recycle, confidence: 96, item: "Plastic bottles", date: "2 hours ago" },
@@ -23,11 +19,33 @@ const recentAnalysis = [
 const quickActions = [
   { label: "Upload Waste", icon: Camera, path: "/ai-analysis", variant: "hero" as const },
   { label: "My Orders", icon: Package, path: "/dashboard", variant: "secondary" as const },
-  { label: "Chat", icon: MessageCircle, path: "/dashboard", variant: "secondary" as const },
+  { label: "Loyalty Points", icon: Star, path: "/points", variant: "secondary" as const },
   { label: "Companies", icon: Recycle, path: "/companies", variant: "secondary" as const },
 ];
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [points, setPoints] = useState<number | null>(null);
+  const [pendingPickups, setPendingPickups] = useState<number>(0);
+
+  useEffect(() => {
+    if (!user) return;
+    Promise.all([
+      supabase.rpc("get_user_points_balance", { _user_id: user.id }),
+      supabase.from("pickup_requests").select("id", { count: "exact" }).eq("user_id", user.id).eq("status", "pending"),
+    ]).then(([{ data: pts }, { count }]) => {
+      setPoints(pts ?? 0);
+      setPendingPickups(count ?? 0);
+    });
+  }, [user]);
+
+  const summaryCards = [
+    { label: "Waste Uploads", value: "24", icon: Upload, color: "text-primary" },
+    { label: "Pending Pickups", value: String(pendingPickups), icon: Truck, color: "text-warning" },
+    { label: "Loyalty Points", value: points !== null ? points.toLocaleString() : "—", icon: Star, color: "text-info" },
+    { label: "Total Spent", value: "KES 4,200", icon: CreditCard, color: "text-primary" },
+  ];
+
   return (
     <Layout>
       <section className="py-8">
@@ -36,7 +54,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-display font-bold text-foreground">Dashboard</h1>
-              <p className="text-muted-foreground text-sm">Welcome back, John</p>
+              <p className="text-muted-foreground text-sm">Welcome back!</p>
             </div>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
@@ -104,6 +122,24 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* Points Banner */}
+          {points !== null && points > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 green-card p-5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Star className="w-8 h-8 opacity-80" />
+                <div>
+                  <div className="font-display font-bold text-xl">{points.toLocaleString()} Points Available</div>
+                  <div className="text-primary-foreground/70 text-sm">Redeem for supermarket discounts, airtime & brand offers</div>
+                </div>
+              </div>
+              <Link to="/points">
+                <Button variant="secondary" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  Redeem Now
+                </Button>
+              </Link>
+            </motion.div>
+          )}
 
           {/* Nearby Companies Preview */}
           <div className="mt-6 glass-card p-6">
