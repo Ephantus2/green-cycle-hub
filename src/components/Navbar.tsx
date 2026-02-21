@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Recycle, Menu, X, LogOut, Star } from "lucide-react";
+import { Recycle, Menu, X, LogOut, Star, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -63,6 +63,11 @@ const Navbar = () => {
               <Link to="/dashboard">
                 <Button variant="ghost" size="sm">Dashboard</Button>
               </Link>
+              <Link to="/chat">
+                <Button variant="ghost" size="sm">
+                  <MessageCircle className="w-4 h-4 mr-1" /> Chat
+                </Button>
+              </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4 mr-1" /> Sign Out
               </Button>
@@ -103,6 +108,11 @@ const Navbar = () => {
                 <>
                   <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
                     <Button variant="ghost" className="w-full">Dashboard</Button>
+                  </Link>
+                  <Link to="/chat" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" className="w-full">
+                      <MessageCircle className="w-4 h-4 mr-1" /> Chat
+                    </Button>
                   </Link>
                   <Button variant="ghost" className="w-full" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                     <LogOut className="w-4 h-4 mr-1" /> Sign Out

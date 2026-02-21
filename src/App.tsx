@@ -13,6 +13,7 @@ import Companies from "./pages/Companies";
 import Points from "./pages/Points";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/points" element={<Points />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
