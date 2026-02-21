@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      agreement_signatures: {
+        Row: {
+          id: string
+          pickup_request_id: string
+          signature_data: string
+          signed_at: string
+          signer_role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          pickup_request_id: string
+          signature_data: string
+          signed_at?: string
+          signer_role?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          pickup_request_id?: string
+          signature_data?: string
+          signed_at?: string
+          signer_role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          attachment_url: string | null
+          created_at: string
+          id: string
+          message: string | null
+          message_type: string
+          metadata: Json | null
+          pickup_request_id: string
+          sender_id: string
+          sender_name: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          message_type?: string
+          metadata?: Json | null
+          pickup_request_id: string
+          sender_id: string
+          sender_name: string
+        }
+        Update: {
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          message_type?: string
+          metadata?: Json | null
+          pickup_request_id?: string
+          sender_id?: string
+          sender_name?: string
+        }
+        Relationships: []
+      }
       pickup_requests: {
         Row: {
           agreement_pdf_url: string | null

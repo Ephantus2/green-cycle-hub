@@ -41,7 +41,7 @@ const PickupRequestDialog = ({ open, onOpenChange, company, wasteType, wasteItem
 
     setLoading(true);
     try {
-      const { error } = await supabase.from("pickup_requests").insert({
+      const { data: insertedRow, error } = await supabase.from("pickup_requests").insert({
         user_id: user.id,
         company_id: company.id,
         company_name: company.name,
@@ -51,10 +51,22 @@ const PickupRequestDialog = ({ open, onOpenChange, company, wasteType, wasteItem
         preferred_time: form.preferred_time,
         location: form.location.slice(0, 255),
         status: "pending",
-      });
+      }).select().single();
 
       if (error) throw error;
-      toast.success("Pickup request sent! The company will review your request.");
+
+      // Auto-send system chat message
+      if (insertedRow) {
+        await supabase.from("chat_messages").insert({
+          pickup_request_id: insertedRow.id,
+          sender_id: user.id,
+          sender_name: "System",
+          message: `🚛 Pickup request created for ${company.name}. Waste type: ${wasteType || "general"}. Location: ${form.location}. Date: ${form.preferred_date}. Go to Chat to generate and sign the agreement.`,
+          message_type: "system",
+        });
+      }
+
+      toast.success("Pickup request sent! Go to Chat to generate the agreement.");
       onOpenChange(false);
       setForm({ preferred_date: "", preferred_time: "morning", location: "", waste_description: wasteItem || "" });
     } catch (err: any) {
